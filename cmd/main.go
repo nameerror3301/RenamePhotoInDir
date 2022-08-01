@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -35,9 +36,14 @@ func ReadFileDir(path string) error {
 			ReadFileDir(filepath.Join(path, file.Name()))
 		} else {
 			if isImage(file.Name()) {
-				idx++
-				shared := filepath.Ext(filepath.Join(path, file.Name()))
-				os.Rename(filepath.Join(path, file.Name()), filepath.Join(path, fmt.Sprintf("Image-%s%s", strconv.Itoa(idx), shared)))
+				if strings.Contains(file.Name(), "[$]") {
+					idx++
+					continue
+				} else {
+					idx++
+					shared := filepath.Ext(filepath.Join(path, file.Name()))
+					os.Rename(filepath.Join(path, file.Name()), filepath.Join(path, fmt.Sprintf("Ima[$]ge-%s%s", strconv.Itoa(idx), shared)))
+				}
 			}
 		}
 	}
