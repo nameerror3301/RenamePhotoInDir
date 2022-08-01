@@ -13,16 +13,17 @@ import (
 )
 
 func main() {
-	path := "/home/onebyteforlife/go/src/RenamePhotoInDir/Wallpapers"
+	path := "your path to files photo"
 	if status := RenameRandom(path); !status {
 		log.Fatal("Err random rename file")
 	}
-	err := RenameFileInDir(path)
-	if err != nil {
+
+	if err := RenameFileInDir(path); err != nil {
 		log.Fatal(err)
 	}
 }
 
+// A final function that combines all functions and checks for a directory
 func RenameFileInDir(path string) error {
 	if _, err := os.Stat(path); err != nil {
 		return fmt.Errorf("The directory does not exist - %s", err)
@@ -33,6 +34,7 @@ func RenameFileInDir(path string) error {
 	return nil
 }
 
+// Recursive search and renaming files to normal names
 func ReadFileDir(path string) error {
 	var idx int
 	files, _ := os.ReadDir(path)
@@ -50,6 +52,7 @@ func ReadFileDir(path string) error {
 	return nil
 }
 
+// Initial renaming of files to random names
 func RenameRandom(path string) bool {
 	var pathToFile string
 	filepath.Walk(path, func(wPath string, info fs.FileInfo, err error) error {
@@ -58,7 +61,7 @@ func RenameRandom(path string) bool {
 		}
 		if isImage(wPath) {
 			shared := filepath.Ext(wPath)
-			err := os.Rename(wPath, filepath.Join(pathToFile, fmt.Sprintf("%s%s", ShaGenString(), shared)))
+			err := os.Rename(wPath, filepath.Join(pathToFile, fmt.Sprintf("%s%s", GenRandomString(), shared)))
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -68,7 +71,8 @@ func RenameRandom(path string) bool {
 	return true
 }
 
-func ShaGenString() string {
+// Generating a random string for file names
+func GenRandomString() string {
 	rand.Seed(time.Now().UnixNano())
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	length := 16
@@ -79,6 +83,7 @@ func ShaGenString() string {
 	return b.String()
 }
 
+// Function for checking if a file is an image
 func isImage(file string) bool {
 	var shareds = []string{".jpg", ".jpeg", ".png"}
 	for _, shared := range shareds {
