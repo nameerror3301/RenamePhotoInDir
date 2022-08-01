@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	path := "/home/onebyteforlife/go/src/RenamePhotoInDir/Wallpapers"
+	path := "path"
 	err := RenameFileInDir(path)
 	if err != nil {
 		log.Fatal(err)
@@ -20,7 +20,7 @@ func main() {
 
 func RenameFileInDir(path string) error {
 	if _, err := os.Stat(path); err != nil {
-		return fmt.Errorf("Директория не существует - %s", err)
+		return fmt.Errorf("The directory does not exist - %s", err)
 	}
 	if err := ReadFileDir(path); err != nil {
 		return err
