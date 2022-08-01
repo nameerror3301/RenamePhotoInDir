@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -12,7 +13,7 @@ func main() {
 	path := "/home/onebyteforlife/go/src/RenamePhotoInDir/Wallpapers"
 	err := RenameFileInDir(path)
 	if err != nil {
-		fmt.Printf("Выбраная вами директория не существует - %v\n", err)
+		log.Fatal(err)
 	}
 }
 
