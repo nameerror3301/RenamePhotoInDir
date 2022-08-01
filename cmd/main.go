@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 
 func RenameFileInDir(path string) error {
 	if _, err := os.Stat(path); err != nil {
-		return err
+		return fmt.Errorf("Директория не существует - %s", err)
 	}
 	if err := ReadFileDir(path); err != nil {
 		return err
@@ -26,14 +27,16 @@ func RenameFileInDir(path string) error {
 }
 
 func ReadFileDir(path string) error {
+	var idx int
 	files, _ := ioutil.ReadDir(path)
 	for _, file := range files {
 		if file.IsDir() {
-			fmt.Println(file.Name())
 			ReadFileDir(filepath.Join(path, file.Name()))
 		} else {
 			if isImage(file.Name()) {
-				fmt.Printf("\t%s\n", file.Name())
+				idx++
+				shared := filepath.Ext(filepath.Join(path, file.Name()))
+				os.Rename(filepath.Join(path, file.Name()), filepath.Join(path, fmt.Sprintf("Image-%s%s", strconv.Itoa(idx), shared)))
 			}
 		}
 	}
@@ -41,8 +44,11 @@ func ReadFileDir(path string) error {
 }
 
 func isImage(file string) bool {
-	if filepath.Ext(file) == ".jpg" || filepath.Ext(file) == ".png" {
-		return true
+	var shareds = []string{".jpg", ".jpeg", ".png"}
+	for _, shared := range shareds {
+		if filepath.Ext(file) == shared {
+			return true
+		}
 	}
 	return false
 }
