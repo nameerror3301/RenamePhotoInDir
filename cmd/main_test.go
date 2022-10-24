@@ -4,6 +4,22 @@ import (
 	"testing"
 )
 
+func TestRenameRandom(t *testing.T) {
+	t.Run("check-RenameRandom-valid", func(t *testing.T) {
+		path := "/home/onebyteforlife/go/src/RenamePhotoInDir/Wallpapers"
+		if err := RenameRandom(path); err != nil {
+			t.Error("RenameRandom() - Did not pass the test with the correct data")
+		}
+	})
+
+	t.Run("check-RenameRandom-invalid", func(t *testing.T) {
+		path := ""
+		if err := RenameRandom(path); err == nil {
+			t.Error("RenameRandom() - Didn't pass the test with the wrong data")
+		}
+	})
+}
+
 // Test func isImage()
 func TestIsImage(t *testing.T) {
 	t.Run("check-IsImage-valid", func(t *testing.T) {
@@ -35,50 +51,18 @@ func TestIsImage(t *testing.T) {
 	})
 }
 
-func TestReadFileDir(t *testing.T) {
+func TestRenameNormal(t *testing.T) {
 	t.Run("check-ReadFileDir-valid", func(t *testing.T) {
 		path := "/home/onebyteforlife/go/src/RenamePhotoInDir/Wallpapers"
-		if err := ReadFileDir(path); err != nil {
-			t.Error("RenameFileDir() - Did not pass the test with the correct data")
+		if err := RenameNormal(path); err != nil {
+			t.Error("RenameNormal() - Did not pass the test with the correct data")
 		}
 	})
 
 	t.Run("check-ReadFileDir-invalid", func(t *testing.T) {
 		path := ""
-		if err := ReadFileDir(path); err == nil {
-			t.Error("RenameFileDir() - Didn't pass the test with the wrong data")
-		}
-	})
-}
-
-func TestRenameRandom(t *testing.T) {
-	t.Run("check-RenameRandom-valid", func(t *testing.T) {
-		path := "/home/onebyteforlife/go/src/RenamePhotoInDir/Wallpapers"
-		if err := RenameRandom(path); err != nil {
-			t.Error("RenameRandom() - Did not pass the test with the correct data")
-		}
-	})
-
-	t.Run("check-RenameRandom-invalid", func(t *testing.T) {
-		path := ""
-		if err := RenameRandom(path); err == nil {
-			t.Error("RenameRandom() - Didn't pass the test with the wrong data")
-		}
-	})
-}
-
-func TestRenameFileInDir(t *testing.T) {
-	t.Run("check-RenameRandom-valid", func(t *testing.T) {
-		path := "/home/onebyteforlife/go/src/RenamePhotoInDir/Wallpapers"
-		if err := RenameFileInDir(path); err != nil {
-			t.Error("RenameRandom() - Did not pass the test with the correct data")
-		}
-	})
-
-	t.Run("check-RenameRandom-invalid", func(t *testing.T) {
-		path := ""
-		if err := RenameFileInDir(path); err == nil {
-			t.Error("RenameRandom() - Didn't pass the test with the wrong data")
+		if err := RenameNormal(path); err == nil {
+			t.Error("RenameNormal() - Didn't pass the test with the wrong data")
 		}
 	})
 }

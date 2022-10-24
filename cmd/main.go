@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/fs"
 	"log"
 	"math/rand"
 	"os"
@@ -18,36 +17,27 @@ func main() {
 		log.Fatalf("%s", err)
 	}
 
-	if err := RenameFileInDir(path); err != nil {
+	if err := RenameNormal(path); err != nil {
 		log.Fatalf("%s", err)
 	}
-
-}
-
-// A final function that combines all functions and checks for a directory
-func RenameFileInDir(path string) error {
-	if err := ReadFileDir(path); err != nil {
-		return fmt.Errorf("err rename file in dir - %s", err)
-	}
-	return nil
 }
 
 // Recursive search and renaming files to normal names
-func ReadFileDir(path string) error {
+func RenameNormal(path string) error {
 	var idx int
 	files, err := os.ReadDir(path)
 	if err != nil {
-		return fmt.Errorf("err read dir - %s", err)
+		return fmt.Errorf("Err path is not valid, your path <%s> - %s", path, err)
 	}
 	for _, file := range files {
 		if file.IsDir() {
-			ReadFileDir(filepath.Join(path, file.Name()))
+			RenameNormal(filepath.Join(path, file.Name()))
 		} else {
 			if isImage(file.Name()) {
 				idx++
 				shared := filepath.Ext(filepath.Join(path, file.Name()))
 				if err := os.Rename(filepath.Join(path, file.Name()), filepath.Join(path, fmt.Sprintf("Images-%s%s", strconv.Itoa(idx), shared))); err != nil {
-					return fmt.Errorf("err rename file - %s", err)
+					return fmt.Errorf("Err rename file [%s] in dir [%s] - %s", file.Name(), path, err)
 				}
 			}
 		}
@@ -58,25 +48,25 @@ func ReadFileDir(path string) error {
 // Initial renaming of files to random names
 func RenameRandom(path string) error {
 	if _, err := os.ReadDir(path); err != nil {
-		return err
+		return fmt.Errorf("Err path is not valid, your path <%s> - %s", path, err)
 	}
-	var pathToFile string
-	filepath.Walk(path, func(wPath string, info fs.FileInfo, err error) error {
-		if info.IsDir() {
-			pathToFile = wPath
-		}
-		if isImage(wPath) {
-			shared := filepath.Ext(wPath)
-			if err := os.Rename(wPath, filepath.Join(pathToFile, fmt.Sprintf("%s%s", GenRandomString(), shared))); err != nil {
+	filepath.Walk(path, func(wPath string, info os.FileInfo, err error) error {
+		if !info.IsDir() && isImage(info.Name()) {
+			if err != nil {
 				return err
 			}
+			shared := filepath.Ext(wPath)
+			dir, file := filepath.Split(wPath)
+			if err := os.Rename(wPath, filepath.Join(dir, fmt.Sprintf("%s%s", GenRandomString(), shared))); err != nil {
+				return fmt.Errorf("Err rename file [%s] in dir [%s] - %s", file, dir, err)
+			}
+			return nil
 		}
 		return nil
 	})
 	return nil
 }
 
-// Generating a random string for file names
 func GenRandomString() string {
 	rand.Seed(time.Now().UnixNano())
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -88,7 +78,6 @@ func GenRandomString() string {
 	return b.String()
 }
 
-// Function for checking if a file is an image
 func isImage(file string) bool {
 	var shareds = []string{".jpg", ".jpeg", ".png"}
 	for _, shared := range shareds {
