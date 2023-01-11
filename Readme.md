@@ -28,7 +28,7 @@ You can do it with the command **"go run main.go"** or **"go build -o main.go"**
 
 ## Developers
 
-- [OneByteForLife](https://github.com/nameerror3301)
+- [OneByteForLife](https://github.com/OneByteForLife)
 
 ## License
 
